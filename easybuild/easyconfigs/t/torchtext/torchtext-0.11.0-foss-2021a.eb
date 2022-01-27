@@ -1,0 +1,51 @@
+##
+# Author:    Robert Mijakovic <robert.mijakovic@lxp.lu>
+##
+easyblock = 'PythonPackage'
+
+name = 'torchtext'
+version = '0.11.0'
+local_pt_version = '1.10.0'
+local_cuda_suffix = '-CUDA-%(cudaver)s'
+
+
+homepage = 'https://github.com/pytorch/text'
+description = "Data loaders and abstractions for text and NLP"
+
+toolchain = {'name': 'foss', 'version': '2021a'}
+
+# The tarball of the final v0.11.0 release is labelled as a release candidate
+# see https://github.com/pytorch/text/releases/tag/v0.11.0-rc3
+local_tarball_version = '%(version)s-rc3'
+
+# Sources are no longer available in PyPI, it only has wheels
+source_urls = ['https://github.com/pytorch/text/archive/']
+sources = ['v%s.tar.gz' % local_tarball_version]
+checksums = ['232a84f3bb83e0d2a2f57b353fde24a4bc09739c18a9c5a84fc1e88474abb338']
+
+builddependencies = [
+    ('RE2', '2021-09-01'),
+]
+
+dependencies = [
+    ('CUDA', '11.3.1', '', True),
+    ('UCX-CUDA', '1.10.0', local_cuda_suffix),
+    ('Python', '3.9.5'),
+    ('SciPy-bundle', '2021.05'),
+    ('SentencePiece', '0.1.96'),
+    ('tqdm', '4.61.1'),
+    ('PyTorch', local_pt_version, local_cuda_suffix),
+    ('double-conversion', '3.1.5'),
+]
+
+# Defaults. Can be changed with --cuda-compute-capabilities
+cuda_compute_capabilities = ['3.5', '3.7', '5.2', '6.0', '6.1', '7.0', '7.2', '7.5', '8.0']
+
+# Disable bundled libraries to use those from EB: RE2, SentencePiece
+preinstallopts = "sed -i '/third_party/d;/BuildExtension/d' setup.py &&"
+
+use_pip = True
+download_dep_fail = True
+sanity_pip_check = True
+
+moduleclass = 'tools'
